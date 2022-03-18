@@ -3,6 +3,7 @@ from collections import namedtuple
 from pathlib import Path
 import janus
 import queue
+import os
 import sys
 import threading
 import uuid
@@ -24,6 +25,7 @@ from .inspect import inspect_hash
 connections = threading.local()
 
 AttachedDatabase = namedtuple("AttachedDatabase", ("seq", "name", "file"))
+ECHO_SQL = os.environ.get("ECHO_SQL", "false") == "true"
 
 
 class Database:
@@ -175,6 +177,13 @@ class Database:
 
             with sqlite_timelimit(conn, time_limit_ms):
                 try:
+                    if ECHO_SQL:
+                        sys.stderr.write(
+                            "DEBUG: conn={}, sql = {}, params = {}:\n".format(
+                                conn, repr(sql), params
+                            )
+                        )
+                        sys.stderr.flush()
                     cursor = conn.cursor()
                     cursor.execute(sql, params if params is not None else {})
                     max_returned_rows = self.ds.max_returned_rows
