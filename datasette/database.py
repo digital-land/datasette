@@ -1,5 +1,6 @@
 import asyncio
 from collections import namedtuple
+from datetime import datetime
 from pathlib import Path
 import janus
 import queue
@@ -179,8 +180,8 @@ class Database:
                 try:
                     if ECHO_SQL:
                         sys.stderr.write(
-                            "DEBUG: conn={}, sql = {}, params = {}:\n".format(
-                                conn, repr(sql), params
+                            "DEBUG: time={}, conn={}, sql = {}, params = {}:\n".format(
+                                datetime.now(), conn, repr(sql), params
                             )
                         )
                         sys.stderr.flush()
